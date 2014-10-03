@@ -1,4 +1,135 @@
+
+
+
 package facebookfriends.apps.wwc.com.facebookfriends;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.Fragment;
+import java.util.Arrays;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import com.facebook.Session;
+import com.facebook.SessionState;
+import com.facebook.UiLifecycleHelper;
+import com.facebook.widget.LoginButton;
+
+import android.util.Log;
+
+
+public class FriendLogin extends FragmentActivity {
+
+    private PlaceholderFragment placementFragment;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_friend_login);
+        if (savedInstanceState == null) {
+            placementFragment = new PlaceholderFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.container, placementFragment, "loginFragmentExist")
+                    .commit();
+        }else{
+            placementFragment = (PlaceholderFragment) getSupportFragmentManager().findFragmentById(R.id.container);
+        }
+    }
+
+/**
+ * A placeholder fragment containing a simple view.
+ */
+   public static class PlaceholderFragment extends Fragment {
+
+    private static final String TAG = "MainFragment";
+    private UiLifecycleHelper uiHelper;
+
+        public PlaceholderFragment() {
+        }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        uiHelper = new UiLifecycleHelper(getActivity(), callback);
+        uiHelper.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Session session = Session.getActiveSession();
+        if (session != null &&
+                (session.isOpened() || session.isClosed()) ) {
+            onSessionStateChange(session, session.getState(), null);
+        }
+        uiHelper.onResume();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        uiHelper.onActivityResult(requestCode,resultCode,data);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        uiHelper.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        uiHelper.onDestroy();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        uiHelper.onSaveInstanceState(outState);
+    }
+
+    @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.fragment_friend_login, container, false);
+        LoginButton authButton = (LoginButton) rootView.findViewById(R.id.authButton);
+        authButton.setFragment(this);
+        authButton.setReadPermissions(Arrays.asList("user_friends"));
+
+            return rootView;
+        }
+        private void onSessionStateChange(Session session, SessionState state, Exception exception){
+            if(state.isOpened()){
+                Log.i(TAG,"Logged in...");
+
+                getFragmentManager().beginTransaction().replace(R.id.container,new HomeFragment()).commit();
+
+            }else if(state.isClosed()){
+                Log.i(TAG,"Logged out...");
+            }
+        }
+        private Session.StatusCallback callback = new Session.StatusCallback(){
+            @Override
+            public void call(Session session, SessionState state, Exception exception) {
+                onSessionStateChange(session,state,exception);
+            }
+        };
+    }
+}
+
+
+
+
+
+
+
+
+
+
+/*package facebookfriends.apps.wwc.com.facebookfriends;
 
 import android.app.Activity;
 import android.app.ActionBar;
@@ -11,22 +142,29 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.os.Build;
-
 import com.facebook.Session;
-import com.facebook.widget.LoginButton;
+
+
+
+
+
+
 
 
 public class FriendLogin extends FragmentActivity {
 
+    private PlaceholderFragment placementFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friend_login);
         if (savedInstanceState == null) {
+            placementFragment = new PlaceholderFragment();
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment(), "loginFragmentExist")
+                    .add(R.id.container, placementFragment, "loginFragmentExist")
                     .commit();
+        }else{
+                placementFragment = (PlaceholderFragment) getFragmentManager().findFragmentById(R.id.container);
         }
     }
 
@@ -54,10 +192,6 @@ public class FriendLogin extends FragmentActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Session.getActiveSession().onActivityResult(this,requestCode,resultCode,data);
-
-        /*getFragmentManager().beginTransaction()
-                .replace(R.id.container, new HomeFragment())
-                .commit();*/
     }
 
     @Override
@@ -66,7 +200,6 @@ public class FriendLogin extends FragmentActivity {
         Session session = Session.getActiveSession();
 
         if (session != null && session.isOpened()) {
-           // HomeFragment homefragment = HomeFragment.newInstance(session, "Session");
             getFragmentManager().beginTransaction()
                     .replace(R.id.container, new HomeFragment())
                     .commit();
@@ -83,7 +216,7 @@ public class FriendLogin extends FragmentActivity {
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderFragment extends Fragment {
+   /* public static class PlaceholderFragment extends Fragment {
 
         public PlaceholderFragment() {
         }
@@ -92,12 +225,12 @@ public class FriendLogin extends FragmentActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_friend_login, container, false);
-            //LoginButton authButton = (LoginButton) rootView.findViewById(R.id.authButton);
+
             //authButton.setFragment(this);
-            //authButton.setReadPermissions(Arrays.asList("user_likes", "user_status"));
 
 
             return rootView;
         }
     }
 }
+*/

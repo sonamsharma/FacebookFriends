@@ -3,7 +3,7 @@ package facebookfriends.apps.wwc.com.facebookfriends;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +15,9 @@ import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
+import com.facebook.widget.ProfilePictureView;
+
+import java.util.Arrays;
 
 
 /**
@@ -31,6 +34,9 @@ public class HomeFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    private ProfilePictureView profilePictureView;
+    private TextView userNameView;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -75,22 +81,35 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View v = inflater.inflate(R.layout.fragment_home, container, false);
-        Session.openActiveSession(getActivity(), true, new Session.StatusCallback() {
-            @Override
-            public void call(Session session, SessionState state, Exception exception) {
-                if(session.isOpened()){
-                    Request.newMeRequest(session, new Request.GraphUserCallback() {
-                        @Override
-                        public void onCompleted(GraphUser user, Response response) {
-                            if(user != null){
-                                TextView welcome = (TextView) v.findViewById(R.id.welcome);
-                                welcome.setText("Hello " + user.getName()+ "!");
+// Find the user's profile picture custom view
+        profilePictureView = (ProfilePictureView) v.findViewById(R.id.selection_profile_pic);
+        profilePictureView.setCropped(true);
+
+// Find the user's name view
+        userNameView = (TextView) v.findViewById(R.id.selection_user_name);
+
+
+            Session.openActiveSession(getActivity(), true, new Session.StatusCallback() {
+                @Override
+                public void call(Session session, SessionState state, Exception exception) {
+                    if (session.isOpened()) {
+                        Request.newMeRequest(session, new Request.GraphUserCallback() {
+                            @Override
+                            public void onCompleted(GraphUser user, Response response) {
+                                if (user != null) {
+                                    //TextView welcome = (TextView) v.findViewById(R.id.welcome);
+                                    //welcome.setText("Hello " + user.getBirthday() + "!");
+                                    //Session.getActiveSession().getPermissions();
+                                    //welcome.setText("Permissions are" + Session.getActiveSession().getPermissions());
+                                    profilePictureView.setProfileId(user.getId());
+                                    userNameView.setText(user.getName());
+                                }
                             }
-                        }
-                    }).executeAsync();
+                        }).executeAsync();
+                    }
                 }
-            }
-        });
+            });
+
         return v;
     }
 
