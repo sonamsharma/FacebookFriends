@@ -8,6 +8,14 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_vertical">
+
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:gravity="center_horizontal"
         android:orientation="horizontal" >
@@ -28,14 +36,16 @@
             android:layout_gravity="center"
             android:textColor="#333"
             android:textSize="18sp" />
+
+    </LinearLayout>
         <ListView
             android:id="@+id/selection_list"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
             android:background="@drawable/button_border"/>
+
+
     </LinearLayout>
-
-
 
 </FrameLayout>
