@@ -12,11 +12,13 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ArrayAdapter;
 import android.content.Context;
+import android.content.Intent;
 
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
+import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
 import com.facebook.widget.ProfilePictureView;
@@ -38,11 +40,15 @@ public class HomeFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
+    private static final int REAUTH_ACTIVITY_CODE = 100;
+
 
     private ProfilePictureView profilePictureView;
     private TextView userNameView;
     private ListView listView;
     private List<BaseListElement> listElements;
+
+    private UiLifecycleHelper uiHelper;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -77,6 +83,9 @@ public class HomeFragment extends Fragment {
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
+
+            //uiHelper = new UiLifecycleHelper(getActivity(), callback);
+           // uiHelper.onCreate(savedInstanceState);
         }
 
 
@@ -229,9 +238,26 @@ public class HomeFragment extends Fragment {
             return new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    // Do nothing for now
+                    startPickerActivity(PickerActivity.FRIEND_PICKER, getRequestCode());
                 }
             };
+        }
+    }
+
+    private void startPickerActivity(Uri data, int requestCode) {
+        Intent intent = new Intent();
+        intent.setData(data);
+        intent.setClass(getActivity(), PickerActivity.class);
+        startActivityForResult(intent, requestCode);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REAUTH_ACTIVITY_CODE) {
+            //uiHelper.onActivityResult(requestCode, resultCode, data);
+        } else if (resultCode == Activity.RESULT_OK) {
+            // Do nothing for now
         }
     }
 }
